@@ -6,6 +6,7 @@ import type { Engine } from "tsparticles-engine";
 const ParticlesBackground: React.FC = () => {
     const [isDarkMode, setIsDarkMode] = useState(false);
     const [showParticles, setShowParticles] = useState(false); // Control visibility
+    const [isInView, setIsInView] = useState(true); // Track if particles are in viewport
 
     // Delay rendering of particles
     useEffect(() => {
@@ -31,11 +32,24 @@ const ParticlesBackground: React.FC = () => {
         }
     }, []);
 
+    // Observe viewport visibility
+    useEffect(() => {
+        const handleScroll = () => {
+            const rect = document.documentElement.getBoundingClientRect();
+            setIsInView(rect.top < window.innerHeight && rect.bottom > 0);
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        handleScroll(); // Initial check
+
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
     const particleColor = isDarkMode ? "#ffffff" : "#333333";
     const lineColor = isDarkMode ? "#ffffff" : "#333333";
     const lightModeOpacity = isDarkMode ? "0.3" : "0.7";
 
-    if (!showParticles) return null; // Render nothing until delay passes
+    if (!showParticles || !isInView) return null; // Render nothing if not in viewport or delay not passed
 
     return (
         <Particles
@@ -43,8 +57,9 @@ const ParticlesBackground: React.FC = () => {
             init={particlesInit}
             options={{
                 fullScreen: { enable: false },
+                fpsLimit: 120, // Cap FPS for performance
                 particles: {
-                    number: { value: 50, density: { enable: true, value_area: 700 } },
+                    number: { value: 50, density: { enable: true, value_area: 800 } }, // Reduce particle count for better performance
                     color: { value: particleColor },
                     line_linked: {
                         enable: true,
@@ -53,14 +68,14 @@ const ParticlesBackground: React.FC = () => {
                         opacity: lightModeOpacity,
                         width: 1,
                     },
-                    opacity: { value: 0.5 },
+                    opacity: { value: 0.5, random: false },
                     size: { value: 1, random: true },
-                    move: { enable: true, speed: 0.7, outModes: { default: "out" } },
+                    move: { enable: true, speed: 0.5, outModes: { default: "out" } }, // Reduce speed for better visual performance
                 },
                 interactivity: {
                     detect_on: "window",
                     events: {
-                        onhover: { enable: true, mode: "grab" },
+                        onhover: { enable: true, mode: "grab" }, // Disable unnecessary events for better performance
                     },
                     modes: {
                         grab: { distance: 200, line_linked: { opacity: 0.8 } },
@@ -83,8 +98,10 @@ const ParticlesBackground: React.FC = () => {
     );
 };
 
+// Load particles.js engine
 const particlesInit = async (main: Engine): Promise<void> => {
     await loadFull(main);
 };
 
 export default ParticlesBackground;
+
