@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: 'Neue Montreal';
+    src: url('/fonts/PPNeueMontreal-Book.woff2') format('woff2'),
+    url('/fonts/PPNeueMontreal-Book.woff') format('woff');
+    font-weight: 400; /* Book weight (normal) */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Neue Montreal';
+    src: url('/fonts/PPNeueMontreal-Bold.woff2') format('woff2'),
+    url('/fonts/PPNeueMontreal-Bold.woff') format('woff');
+    font-weight: 700; /* Bold weight */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Neue Montreal';
+    src: url('/fonts/PPNeueMontreal-Italic.woff2') format('woff2'),
+    url('/fonts/PPNeueMontreal-Italic.woff') format('woff');
+    font-weight: 400; /* Normal weight, italic */
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Neue Montreal';
+    src: url('/fonts/PPNeueMontreal-Medium.woff2') format('woff2'),
+    url('/fonts/PPNeueMontreal-Medium.woff') format('woff');
+    font-weight: 500; /* Medium weight */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Neue Montreal';
+    src: url('/fonts/PPNeueMontreal-SemiBolditalic.woff2') format('woff2'),
+    url('/fonts/PPNeueMontreal-SemiBolditalic.woff') format('woff');
+    font-weight: 600; /* Semi-Bold weight */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Neue Montreal';
+    src: url('/fonts/PPNeueMontreal-Thin.woff2') format('woff2'),
+    url('/fonts/PPNeueMontreal-Thin.woff') format('woff');
+    font-weight: 200; /* Thin weight */
+    font-style: normal;
+}
+
+@layer base {
+    html {
+        font-family: "Neue Montreal", system-ui, sans-serif;
+    }
+}
