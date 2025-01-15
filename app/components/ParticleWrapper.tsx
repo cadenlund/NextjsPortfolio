@@ -10,7 +10,7 @@ const ParticleWrapper: React.FC = () => {
 
     return (
         <div className="absolute inset-0 z-10">
-            <AnimatePresence mode="wait" initial={false}>
+            <AnimatePresence mode="wait" initial={true}>
                 <motion.div
                     key={pathname}
                     initial={{ opacity: 0 }}

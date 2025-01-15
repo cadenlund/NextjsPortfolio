@@ -57,7 +57,7 @@ const ParticlesBackground: React.FC = () => {
             init={particlesInit}
             options={{
                 fullScreen: { enable: false },
-                fpsLimit: 120, // Cap FPS for performance
+                fpsLimit: 80, // Cap FPS for performance
                 particles: {
                     number: { value: 50, density: { enable: true, value_area: 800 } }, // Reduce particle count for better performance
                     color: { value: particleColor },
