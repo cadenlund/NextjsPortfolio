@@ -11,7 +11,7 @@ const Hero: React.FC = () => {
                 <div className="col-start-1 col-span-4 row-start-1 row-span-2 flex flex-col justify-start">
                     <p className="text-xl text-gray-900 dark:text-gray-300 mb-2">Hi, I&apos;m Caden</p>
                     <h1 className="text-5xl font-bold mb-4">
-                        Machine Learning Developer
+                        Machine Learning Developer!
                     </h1>
                     <p className="text-lg text-gray-900 dark:text-gray-300 mb-6">
                         I am a junior developer specializing in machine learning with Python and TensorFlow,
