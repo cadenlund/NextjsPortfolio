@@ -1,4 +1,4 @@
-import React from "react";
+import React from "react"import Image from "next/image"; // Import Next.js Image component
 import SocialIcons from "./SocialIcons"; // Import the new component
 
 const Hero: React.FC = () => {
@@ -14,16 +14,22 @@ const Hero: React.FC = () => {
                     </h1>
                     <p className="text-lg text-gray-900 dark:text-gray-300 mb-6">
                         I am a junior developer specializing in machine learning with Python and TensorFlow,
-                        while also crafting responsive and user-friendly interfaces with React, TypeScript, and Tailwind.
+                        while also crafting responsive and user-friendly interfaces with React, Next.js, and Typescript.
                     </p>
 
                     {/* Social Icons Component */}
                     <SocialIcons />
                 </div>
 
-                {/* Rectangle with rounded corners */}
-                <div className="col-start-6 col-span-3 row-start-1 row-span-4 bg-gray-200 dark:bg-neutral-800 rounded-lg shadow-lg">
-                    {/* Optional content inside the rectangle */}
+                {/* Next.js Image */}
+                <div className="col-start-6 col-span-3 row-start-1 row-span-4 relative rounded-lg shadow-lg overflow-hidden">
+                    <Image
+                        src="/path-to-your-image.jpg" // Replace with your image path
+                        alt="Hero Image"
+                        layout="fill" // Fill the container
+                        objectFit="cover" // Ensure the image covers the area
+                        className="rounded-lg" // Apply rounded corners
+                    />
                 </div>
             </div>
         </div>
