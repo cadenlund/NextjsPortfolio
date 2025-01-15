@@ -9,7 +9,7 @@ const ParticleWrapper: React.FC = () => {
     const pathname = usePathname(); // Get the current route for unique key
 
     return (
-        <div className="absolute inset-0 z-10">
+        <div className="absolute inset-0 z-10 pointer-events-none">
             <AnimatePresence mode="wait" initial={true}>
                 <motion.div
                     key={pathname}

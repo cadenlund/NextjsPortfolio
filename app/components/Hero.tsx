@@ -1,4 +1,5 @@
-import React from "react"import Image from "next/image"; // Import Next.js Image component
+import React from "react"
+import Image from "next/image"; // Import Next.js Image component
 import SocialIcons from "./SocialIcons"; // Import the new component
 
 const Hero: React.FC = () => {
@@ -24,7 +25,7 @@ const Hero: React.FC = () => {
                 {/* Next.js Image */}
                 <div className="col-start-6 col-span-3 row-start-1 row-span-4 relative rounded-lg shadow-lg overflow-hidden">
                     <Image
-                        src="/path-to-your-image.jpg" // Replace with your image path
+                        src="/images/page/greyImage.jpg" // Replace with your image path
                         alt="Hero Image"
                         layout="fill" // Fill the container
                         objectFit="cover" // Ensure the image covers the area

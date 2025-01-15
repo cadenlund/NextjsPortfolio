@@ -3,7 +3,7 @@ import { FaCode, FaRobot, FaDatabase, FaCog, FaCloud, FaPaintBrush } from "react
 
 const Skills: React.FC = () => {
     return (
-        <div className="h-[800px] flex relative justify-center text-black dark:text-white mt-10">
+        <div className="h-[750px] flex relative justify-center text-black dark:text-white mt-10">
             {/* Main CSS grid container */}
             <div className="grid gap-10 grid-cols-6 grid-rows-5 w-full h-full max-w-[1200px] relative">
                 {/* Header in the middle three columns */}
