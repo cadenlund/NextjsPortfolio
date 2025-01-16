@@ -88,7 +88,7 @@ const Timeline: React.FC = () => {
                         </h3>
                         <p className="text-gray-600 dark:text-gray-400 mb-4">Baton Rouge, Louisiana</p>
                         <p className="text-gray-700 dark:text-gray-300">
-                            Performed Seo optimization on Frockcandy's online shopify boutique.
+                            Performed Seo optimization on Frockcandy online shopify boutique.
                             Performed keyword optimization, fixed technical errors in the website, and
                             launched optimized Google Ad campaigns.
                         </p>
