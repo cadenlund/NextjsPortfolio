@@ -4,7 +4,7 @@ import SocialIcons from "./SocialIcons"; // Import the new component
 
 const Hero: React.FC = () => {
     return (
-        <div className="h-[400px] flex relative justify-center text-black dark:text-white">
+        <div className="h-[400px] flex relative justify-center text-black dark:text-white mt-24">
             {/* Main CSS grid container */}
             <div className="grid gap-4 grid-cols-7 grid-rows-4 w-full h-full max-w-[1200px] relative">
                 {/* Introductory Text */}

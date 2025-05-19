@@ -13,11 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
         <ParticleWrapper />
 
-        <Header />
-
         <main className="relative z-10">{children}</main>
-
-        <Footer />
         </body>
         </html>
     );
