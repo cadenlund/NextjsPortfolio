@@ -1,10 +1,10 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 
 // --- Color Mapping Function ---
-function getSkillColor(skill) {
+function getSkillColor(skill: string) {
     const codingLangs = new Set(["Python", "C", "C++", "Java", "JavaScript", "TypeScript"]);
     const databases = new Set(["SQL", "Postgres", "KDB+"]);
     const dataManip = new Set(["Pandas", "NumPy", "Matplotlib"]);
@@ -32,7 +32,14 @@ function getSkillColor(skill) {
 
 
 // --- Reusable Components ---
-const Input = ({ placeholder, value, onChange, className }) => (
+interface InputProps {
+    id?: string; // 👈 Add this line
+    placeholder: string;
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    className?: string;
+}
+const Input: React.FC<InputProps> = ({ placeholder, value, onChange, className }) => (
     <input
         type="text"
         placeholder={placeholder}
@@ -41,26 +48,30 @@ const Input = ({ placeholder, value, onChange, className }) => (
         className={`border rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
     />
 );
-
-const Badge = ({ children, className = "", ...props }) => (
+interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
+    children: React.ReactNode;
+}
+const Badge: React.FC<BadgeProps> = ({ children, className = "", ...props }) => (
     <span
         {...props}
         className={`px-2.5 py-0.5 text-sm rounded-full cursor-pointer transition transform hover:scale-105 ${className}`}
     >
-    {children}
-  </span>
+        {children}
+    </span>
 );
 
-const Button = ({ children, className = "", ...props }) => (
-    <button
-        {...props}
-        className={`px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
-    >
-        {children}
-    </button>
-);
 
 // --- Example Projects Data ---
+interface Project {
+    slug: string;
+    title: string;
+    description: string;
+    skills: string[];
+    image: string;
+    githubLink: string;
+    dateAdded: string; // Or Date
+    details: string;
+}
 const projectsData = [
     {
         slug: "mot-real-time",
@@ -94,16 +105,16 @@ export default function ProjectsGallery() {
     const [selectedSkill, setSelectedSkill] = useState("");
     const [sortOrder, setSortOrder] = useState("newest"); // 'newest' or 'oldest'
 
-    const handleSearch = (e) => {
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(e.target.value.toLowerCase());
     };
 
-    const handleSkillClick = (skill) => {
+    const handleSkillClick = (skill: string) => {
         setSelectedSkill((prev) => (prev === skill ? "" : skill));
     };
 
     // Sort projects by date
-    const sortProjects = (projects) => {
+    const sortProjects = (projects: Project[]) => {
         if (sortOrder === "newest") {
             return projects.sort(
                 (a, b) => new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime()
@@ -206,7 +217,7 @@ export default function ProjectsGallery() {
                         className="bg-white dark:bg-neutral-800 shadow-lg rounded-2xl overflow-hidden transform transition hover:scale-[1.01]"
                     >
                         <div className="bg-gray-200 dark:bg-neutral-700">
-                            <img
+                            <Image
                                 src={project.image}
                                 alt={project.title}
                                 className="w-full h-48 object-cover"
@@ -242,15 +253,14 @@ export default function ProjectsGallery() {
                                 >
                                     View Details
                                 </Link>
-                                <Button
-                                    as="a"
+                                <Link
                                     href={project.githubLink}
                                     target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="bg-gray-600 text-white hover:bg-gray-700"
+                                    rel="noopener noreferrer" // Note: Next.js 13+ adds this automatically to target="_blank" links
+                                className="bg-gray-600 text-white hover:bg-gray-700 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 >
-                                    GitHub
-                                </Button>
+                                GitHub
+                            </Link>
                             </div>
                         </div>
 

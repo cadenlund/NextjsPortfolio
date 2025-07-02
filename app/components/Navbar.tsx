@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import React from "react";
 
@@ -16,7 +16,7 @@ const Navbar: React.FC = () => {
     return (
         <nav className="relative flex justify-center items-center z-50">
             <div className="relative w-[200px] h-[50px] bg-opacity-5 dark:bg-opacity-50 dark:bg-neutral-900 backdrop-blur-md rounded-full border border-black border-opacity-15 dark:border-white dark:border-opacity-10 dark:shadow-md flex overflow-hidden">
-                {tabs.map((tab, index) => {
+                {tabs.map((tab) => {
                     const isActive = pathname === tab.href;
 
                     return (

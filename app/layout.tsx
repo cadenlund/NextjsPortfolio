@@ -1,7 +1,5 @@
 import React from "react";
 import "./globals.css";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
 import ParticleWrapper from "./components/ParticleWrapper";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

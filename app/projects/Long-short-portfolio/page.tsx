@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
 import markdownContent from "./content"; // ← Import your .ts file with markdown
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-// @ts-ignore
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import rehypeRaw from "rehype-raw";
 
@@ -29,15 +28,16 @@ export default function AlphaFactorPage() {
                 <article className="prose dark:prose-invert max-w-none prose-pre:bg-transparent prose-pre:p-0 prose-pre:shadow-none prose-pre:border-0">
                     <ReactMarkdown rehypePlugins={[rehypeRaw]}
                         components={{
-                            code({ node, inline, className, children, ...props }) {
+                            code({ node, className, children, ...props }) {
                                 const match = /language-(\w+)/.exec(className || "");
-                                if (!inline && match) {
+                                if (match && node && !node.properties.inline) {
+                                    // ...
                                     return (
                                         <SyntaxHighlighter
-                                            style={vscDarkPlus}
+                                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                            style={vscDarkPlus as any}
                                             language={match[1]}
                                             PreTag="div"
-                                            {...props}
                                         >
                                             {String(children).replace(/\n$/, "")}
                                         </SyntaxHighlighter>
