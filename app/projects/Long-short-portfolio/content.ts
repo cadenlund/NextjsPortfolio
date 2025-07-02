@@ -1,21 +1,43 @@
 // content.ts
 const markdown = `
-# ✅ Building a Factor-Based Long-Short Strategy from Scratch
+<h1 align="center">
+Creating a Factor-Based Long-Short stock Strategy
+</h1>
+
+
+---
 
 <p align="center">
   <img src="/images/longshortportfolioproject/longshortportfoliocover.png" alt="Example Image" />
 </p>
 
-Systematic investing using data-driven signals has become a cornerstone of modern quantitative finance. In this post, I’ll show you how I built a long-short equity strategy using open-source tools and structured data pipelines. We’ll start by building a scalable financial database, move on to pulling data from Polygon.io, engineer alpha factors, evaluate them using Alphalens, and finally backtest the strategy using VectorBT.
+---
+
+<p class="text-lg font-medium indent-8 leading-relaxed my-4 text-justify">
+  <strong>Systematic investing</strong> using data-driven signals has become a <strong>cornerstone</strong> of modern quantitative finance. In this post, I will show you how I
+  constructed a long-short signal-based strategy using open-source Python libraries and <strong>structured</strong> data pipelines.
+  Below are the <strong>key steps</strong> in recreating this framework to build your own strategies:
+</p>
+
+<ol class="list-decimal list-inside text-lg font-medium space-y-2">
+  <li>Setting up a Database</li>
+  <li>Creating Alpha Factors</li>
+  <li>Evaluating Alpha Factors</li>
+  <li>Backtesting</li>
+  <li>Live Implementation</li>
+</ol>
+
+
 
 ---
 
-## 🛠️ Setting Up the Tools
+## Setting Up the Tools
 
-For this project, I used **Python**, **Pandas**, **NumPy**, and **Matplotlib** for data manipulation and visualization.  
-**PostgreSQL** with the **TimescaleDB** extension provided scalable storage for historical price data.  
-I fetched historical market data using the **Polygon.io API**, evaluated factor performance with **Alphalens**, and ran backtests using **VectorBT**.
-
+<p class="text-lg font-medium indent-8 leading-relaxed my-4 text-justify">
+  For this project, I use <strong>jupyter lab</strong> for python coding. Jupyter Lab provides a <strong>notebook</strong> like coding experience with blocks for
+  <strong>code and markdown</strong>. It also provides a <strong>rich toolset</strong> with features like an <strong>interactive debugger</strong>, <strong>contextual help windows</strong>,
+   and <strong>autocompletion</strong>. 
+</p>
 ---
 
 ## 🗃️ Designing the Database

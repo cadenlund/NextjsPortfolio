@@ -1,19 +1,25 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { FiSun, FiMoon } from "react-icons/fi"; // Import icons
+import { FiSun, FiMoon } from "react-icons/fi";
 
 const AnimatedToggle: React.FC = () => {
-    const [toggled, setToggled] = useState<boolean>();
+    const [isMounted, setIsMounted] = useState(false);
+    const [toggled, setToggled] = useState<boolean>(false); // Default to light
 
     useEffect(() => {
         const savedTheme = localStorage.getItem("theme");
-        if (savedTheme === "dark") {
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+        if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
             setToggled(true);
             document.documentElement.classList.add("dark");
         } else {
+            setToggled(false);
             document.documentElement.classList.remove("dark");
         }
+
+        setIsMounted(true); // Ensures no render before theme is known
     }, []);
 
     const handleClick = () => {
@@ -29,6 +35,8 @@ const AnimatedToggle: React.FC = () => {
         }
     };
 
+    if (!isMounted) return null; // Prevent mismatches during SSR/initial render
+
     return (
         <div
             onClick={handleClick}
@@ -37,9 +45,9 @@ const AnimatedToggle: React.FC = () => {
             }`}
         >
             {toggled ? (
-                <FiMoon className="text-white w-6 h-6" /> // Moon Icon
+                <FiMoon className="text-white w-6 h-6" />
             ) : (
-                <FiSun className="text-black w-6 h-6" /> // Sun Icon
+                <FiSun className="text-black w-6 h-6" />
             )}
         </div>
     );
