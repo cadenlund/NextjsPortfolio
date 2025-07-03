@@ -11,20 +11,18 @@ const Header: React.FC = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-            // The Key Change is here 👇: The breakpoint is now 1580px
-            const shouldFade = window.innerWidth <= 1580;
+            const breakpoint = 1580; // The breakpoint for fading
+            const shouldFade = window.innerWidth <= breakpoint;
 
             if (shouldFade) {
                 const scrollY = window.scrollY;
                 const fadeDistance = 100; // The distance over which to fade
 
-                // Calculate opacity: 1 (fully visible) at the top, 0 (invisible) at 200px
                 const newOpacity = Math.max(0, 1 - scrollY / fadeDistance);
 
                 setLogoOpacity(newOpacity);
             } else {
-                // On screens wider than 1580px, ensure the logo is always fully visible
-                setLogoOpacity(1);
+                setLogoOpacity(1); // On wider screens, ensure fully visible
             }
         };
 
@@ -51,7 +49,14 @@ const Header: React.FC = () => {
                     className="flex justify-start transition-opacity duration-200"
                     style={{ opacity: logoOpacity }}
                 >
-                    <Link href="/" prefetch={true} aria-hidden={logoOpacity < 0.1} tabIndex={logoOpacity < 0.1 ? -1 : 0}>
+                    <Link
+                        href="/"
+                        prefetch={true}
+                        // Conditionally apply 'pointer-events-none' Tailwind class
+                        className={logoOpacity < 0.1 ? "pointer-events-none" : ""}
+                        aria-hidden={logoOpacity < 0.1} // Hides from screen readers
+                        tabIndex={logoOpacity < 0.1 ? -1 : 0} // Makes it untabbable by keyboard
+                    >
                         <div>
                             <div className="flex flex-col text-xl font-normal tracking-tight leading-tight sm:flex-row sm:gap-1.5">
                                 <span>Caden</span>
