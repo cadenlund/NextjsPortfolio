@@ -277,7 +277,7 @@ export default function ProjectsGallery() {
 
                                 {/* this container is pushed to bottom */}
                                 <div className="flex items-center gap-4 mt-auto">
-                                    {project.primaryActionExternal ? (
+                                    {project.primaryActionLink ? (
                                         <a
                                             href={project.primaryActionLink}
                                             target="_blank"
