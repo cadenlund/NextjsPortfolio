@@ -7,18 +7,36 @@ import type { Engine } from "tsparticles-engine";
 
 const ParticlesBackground: React.FC = () => {
     const [isDarkMode, setIsDarkMode] = useState(false);
+    // 1. New state to hold the particle count
+    const [particleCount, setParticleCount] = useState(40);
 
-    // This hook now only handles dark mode detection.
+    // Dark mode detection hook
     useEffect(() => {
         const checkDarkMode = () => {
             setIsDarkMode(document.documentElement.classList.contains("dark"));
         };
-        checkDarkMode(); // Initial check
-
+        checkDarkMode();
         const observer = new MutationObserver(checkDarkMode);
         observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+        return () => observer.disconnect();
+    }, []);
 
-        return () => observer.disconnect(); // Cleanup
+    // 2. New hook to handle responsive particle count
+    useEffect(() => {
+        const handleResize = () => {
+            // Tailwind's 'md' breakpoint is 768px
+            if (window.innerWidth < 768) {
+                setParticleCount(80); // More particles on smaller screens
+            } else {
+                setParticleCount(40); // Fewer particles on larger screens
+            }
+        };
+
+        handleResize(); // Set initial count on component mount
+        window.addEventListener("resize", handleResize); // Update count on resize
+
+        // Cleanup event listener on component unmount
+        return () => window.removeEventListener("resize", handleResize);
     }, []);
 
     const particlesInit = async (main: Engine): Promise<void> => {
@@ -29,15 +47,15 @@ const ParticlesBackground: React.FC = () => {
         <Particles
             id="tsparticles"
             init={particlesInit}
-            // The key forces a re-render when the theme changes, ensuring colors update.
             key={isDarkMode ? "dark" : "light"}
             options={{
                 fullScreen: { enable: false },
-                fpsLimit: 60, // Capping FPS is good for performance
+                fpsLimit: 60,
                 particles: {
-                    number: { value: 40, density: { enable: true, value_area: 800 } },
+                    // 3. Use the dynamic particleCount state here
+                    number: { value: particleCount, density: { enable: true, value_area: 800 } },
                     color: { value: isDarkMode ? "#ffffff" : "#333333" },
-                    links: { // Renamed from line_linked
+                    links: {
                         color: isDarkMode ? "#ffffff" : "#333333",
                         distance: 150,
                         enable: true,
@@ -54,7 +72,6 @@ const ParticlesBackground: React.FC = () => {
                 },
                 background: { color: "transparent" },
             }}
-            // The change is here 👇: Using Tailwind classes with position: fixed
             className="fixed top-0 left-0 w-full h-full z-0"
         />
     );
