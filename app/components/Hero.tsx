@@ -8,9 +8,9 @@ const Hero: React.FC = () => {
             <div className="flex flex-col items-center w-full max-w-[1200px] md:grid md:grid-cols-12 md:gap-8">
 
                 <div className="flex flex-col items-center text-center md:col-span-7 md:items-start md:text-left">
-                    <p className="text-xl text-gray-900 dark:text-gray-300 mb-2">Hi, I'm Caden</p>
+                    <p className="text-xl text-gray-900 dark:text-gray-300 mb-2">Hi, I&apos;m Caden</p>
                     <h1 className="text-4xl font-bold mb-4 md:text-5xl">
-                        Quantitative Researcher
+                    Quantitative Researcher
                     </h1>
                     <p className="text-lg text-gray-900 dark:text-gray-300 mb-6">
                         I am a junior developer specializing in quantitative research and development,
