@@ -141,7 +141,6 @@ export default function ProjectsGallery() {
 
     return (
         <div className="px-12 py-6 space-y-6 max-w-7xl mx-auto mt-16">
-            <h1 className="text-3xl font-bold">Projects</h1>
 
             {/* Filter Container */}
             <div className="p-6 rounded-[30px] dark:bg-neutral-800 bg-gray-100 mb-6">
