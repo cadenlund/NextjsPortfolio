@@ -216,11 +216,13 @@ export default function ProjectsGallery() {
                         key={index}
                         className="bg-white dark:bg-neutral-800 shadow-lg rounded-2xl overflow-hidden transform transition hover:scale-[1.01]"
                     >
-                        <div className="bg-gray-200 dark:bg-neutral-700">
+                        <div className="bg-gray-200 dark:bg-neutral-700 relative w-full h-48">
                             <Image
                                 src={project.image}
                                 alt={project.title}
-                                className="w-full h-48 object-cover"
+                                fill // This makes the image fill the parent container
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" // Helps Next.js serve the right image size
+                                className="object-cover" // objectFit is now a class
                             />
                         </div>
 

@@ -1,35 +1,33 @@
-import React from "react"
-import Image from "next/image"; // Import Next.js Image component
-import SocialIcons from "./SocialIcons"; // Import the new component
+import React from "react";
+import Image from "next/image";
+import SocialIcons from "./SocialIcons";
 
 const Hero: React.FC = () => {
     return (
-        <div className="h-[400px] flex relative justify-center text-black dark:text-white mt-24">
-            {/* Main CSS grid container */}
-            <div className="grid gap-4 grid-cols-7 grid-rows-4 w-full h-full max-w-[1200px] relative">
-                {/* Introductory Text */}
-                <div className="col-start-1 col-span-4 row-start-1 row-span-2 flex flex-col justify-start">
-                    <p className="text-xl text-gray-900 dark:text-gray-300 mb-2">Hi, I&apos;m Caden</p>
-                    <h1 className="text-5xl font-bold mb-4">
-                        Quantitative Researcher & Developer
+        <div className="flex justify-center px-4 py-8 text-black dark:text-white mt-12 md:mt-24">
+            <div className="flex flex-col items-center w-full max-w-[1200px] md:grid md:grid-cols-12 md:gap-8">
+
+                <div className="flex flex-col items-center text-center md:col-span-7 md:items-start md:text-left">
+                    <p className="text-xl text-gray-900 dark:text-gray-300 mb-2">Hi, I'm Caden</p>
+                    <h1 className="text-4xl font-bold mb-4 md:text-5xl">
+                        Quantitative Researcher
                     </h1>
                     <p className="text-lg text-gray-900 dark:text-gray-300 mb-6">
-                        I am a junior developer specializing in machine learning with Python and TensorFlow,
-                        while also crafting responsive and user-friendly interfaces with React, Next.js, and Typescript.
+                        I am a junior developer specializing in quantitative research and development,
+                        currently pursuing alpha research in futures, leveraging granular market-by-order (MBO)
+                        data to build and test advanced statistical models for predictive signaling.
                     </p>
-
-                    {/* Social Icons Component */}
                     <SocialIcons />
                 </div>
 
-                {/* Next.js Image */}
-                <div className="col-start-6 col-span-3 row-start-1 row-span-4 relative rounded-lg shadow-lg overflow-hidden">
+                {/* Change is here 👇: New aspect ratio for mobile, original for desktop */}
+                <div className="relative w-full max-w-md mt-12 overflow-hidden rounded-lg shadow-lg aspect-[7/8] md:aspect-[3/4] md:col-start-9 md:col-span-4 md:max-w-none md:mt-0">
                     <Image
-                        src="/images/page/greyImage.jpg" // Replace with your image path
+                        src="/images/page/greyImage.jpg"
                         alt="Hero Image"
-                        layout="fill" // Fill the container
-                        objectFit="cover" // Ensure the image covers the area
-                        className="rounded-lg" // Apply rounded corners
+                        layout="fill"
+                        objectFit="cover"
+                        className="rounded-lg"
                     />
                 </div>
             </div>

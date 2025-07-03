@@ -38,6 +38,7 @@ Creating a Factor-Based Long-Short stock Strategy
   <strong>code and markdown</strong>. It also provides a <strong>rich toolset</strong> with features like an <strong>interactive debugger</strong>, <strong>contextual help windows</strong>,
    and <strong>autocompletion</strong>. 
 </p>
+
 ---
 
 ## 🗃️ Designing the Database
