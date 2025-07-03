@@ -46,7 +46,7 @@ const ParticlesBackground: React.FC = () => {
                     },
                     move: { enable: true, speed: 0.5, outModes: { default: "out" } },
                     opacity: { value: 0.5 },
-                    size: { value: { min: 1, max: 2 } },
+                    size: { value: 1 },
                 },
                 interactivity: {
                     events: { onHover: { enable: true, mode: "grab" } },

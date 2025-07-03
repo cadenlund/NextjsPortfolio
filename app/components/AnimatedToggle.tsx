@@ -5,21 +5,22 @@ import { FiSun, FiMoon } from "react-icons/fi";
 
 const AnimatedToggle: React.FC = () => {
     const [isMounted, setIsMounted] = useState(false);
-    const [toggled, setToggled] = useState<boolean>(false); // Default to light
+    const [toggled, setToggled] = useState<boolean>(true); // Default visual state to dark
 
+    // This effect now sets the theme based on localStorage, defaulting to dark.
     useEffect(() => {
         const savedTheme = localStorage.getItem("theme");
-        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-        if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
-            setToggled(true);
-            document.documentElement.classList.add("dark");
-        } else {
+        // Default to dark unless 'light' is explicitly saved in localStorage.
+        if (savedTheme === "light") {
             setToggled(false);
             document.documentElement.classList.remove("dark");
+        } else {
+            setToggled(true);
+            document.documentElement.classList.add("dark");
         }
 
-        setIsMounted(true); // Ensures no render before theme is known
+        setIsMounted(true);
     }, []);
 
     const handleClick = () => {
@@ -35,7 +36,7 @@ const AnimatedToggle: React.FC = () => {
         }
     };
 
-    if (!isMounted) return null; // Prevent mismatches during SSR/initial render
+    if (!isMounted) return null;
 
     return (
         <div
