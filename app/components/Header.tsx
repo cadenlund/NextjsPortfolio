@@ -74,7 +74,7 @@ const Header: React.FC = () => {
                 </div>
 
                 {/* Center: Navigation */}
-                <div className="justify-self-center -translate-x-3">
+                <div className="justify-self-center -translate-x-5">
                     <Navbar />
                 </div>
 
