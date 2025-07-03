@@ -1,3 +1,5 @@
+// components/Header.tsx
+
 "use client"; // This must be at the top to use React Hooks
 
 import React, { useState, useEffect } from "react";
@@ -17,9 +19,7 @@ const Header: React.FC = () => {
             if (shouldFade) {
                 const scrollY = window.scrollY;
                 const fadeDistance = 100; // The distance over which to fade
-
                 const newOpacity = Math.max(0, 1 - scrollY / fadeDistance);
-
                 setLogoOpacity(newOpacity);
             } else {
                 setLogoOpacity(1); // On wider screens, ensure fully visible
@@ -42,18 +42,22 @@ const Header: React.FC = () => {
 
     return (
         <header className="sticky top-0 z-50 bg-transparent px-4 py-4 sm:px-6 lg:px-8">
-            <div className="relative flex items-center justify-between md:grid md:grid-cols-3">
-
-                {/* Left: Logo - Now with dynamic opacity */}
+            {/* Outer container: grid with symmetric sides */}
+            <div
+                className="relative grid grid-cols-[1fr_auto_1fr] items-center w-full"
+            >
+                {/* Left: Logo */}
                 <div
-                    className="flex justify-start transition-opacity duration-200"
-                    style={{ opacity: logoOpacity }}
+                    className="justify-self-start min-w-[120px] transition-opacity duration-200"
+                    style={{
+                        opacity: logoOpacity,
+                        visibility: logoOpacity < 0.05 ? "hidden" : "visible",
+                        pointerEvents: logoOpacity < 0.1 ? "none" : "auto",
+                    }}
                 >
                     <Link
                         href="/"
                         prefetch={true}
-                        // Conditionally apply 'pointer-events-none' Tailwind class
-                        className={logoOpacity < 0.1 ? "pointer-events-none" : ""}
                         aria-hidden={logoOpacity < 0.1} // Hides from screen readers
                         tabIndex={logoOpacity < 0.1 ? -1 : 0} // Makes it untabbable by keyboard
                     >
@@ -69,13 +73,13 @@ const Header: React.FC = () => {
                     </Link>
                 </div>
 
-                {/* Center: Navigation Pill */}
-                <div className="justify-self-center">
+                {/* Center: Navigation */}
+                <div className="justify-self-center -translate-x-3">
                     <Navbar />
                 </div>
 
                 {/* Right: Dark Mode Toggle */}
-                <div className="flex justify-end">
+                <div className="justify-self-end min-w-[50px]">
                     <AnimatedToggle />
                 </div>
             </div>
