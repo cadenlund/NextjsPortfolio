@@ -42,7 +42,7 @@ const AnimatedToggle: React.FC = () => {
         <div
             onClick={handleClick}
             className={`w-12 h-12 flex items-center justify-center rounded-full cursor-pointer transition-all duration-300 ${
-                toggled ? "bg-gray-800" : "bg-gray-200"
+                toggled ? "bg-neutral-950" : "bg-gray-200"
             }`}
         >
             {toggled ? (
