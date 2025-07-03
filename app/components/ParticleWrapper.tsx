@@ -15,7 +15,7 @@ const ParticleWrapper: React.FC = () => {
                     key={pathname}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{duration: 2 }}
+                    transition={{duration: 1 }}
                     className="absolute inset-0"
                 >
                     <ParticlesBackground />
