@@ -21,7 +21,7 @@ const Hero: React.FC = () => {
                 </div>
 
                 {/* Change is here 👇: New aspect ratio for mobile, original for desktop */}
-                <div className="relative w-full max-w-md mt-12 overflow-hidden rounded-lg shadow-lg aspect-[7/8] md:aspect-[3/4] md:col-start-9 md:col-span-4 md:max-w-none md:mt-0">
+                <div className="relative w-full max-w-sm mt-12 overflow-hidden rounded-lg shadow-lg aspect-[7/8] md:aspect-[3/4] md:col-start-9 md:col-span-4 md:max-w-none md:mt-0">
                     <Image
                         src="/images/page/greyImage.jpg"
                         alt="Hero Image"
