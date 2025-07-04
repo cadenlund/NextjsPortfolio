@@ -8,6 +8,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import rehypeRaw from "rehype-raw";
 
+
 export default function AlphaFactorPage() {
     return (
         <motion.div
@@ -23,51 +24,30 @@ export default function AlphaFactorPage() {
                 ← Back
             </Link>
 
-            <div className="
-                w-full
-                max-w-7xl
-                mx-auto
-                mt-12
-                sm:mt-16
-                bg-gray-200
-                dark:bg-neutral-800
-                px-4
-                sm:px-6
-                md:px-12
-                py-6
-                sm:py-8
-                rounded-2xl
-                shadow-lg
-            ">
-                <article className="
-                    prose
-                    dark:prose-invert
-                    max-w-none
-                    prose-pre:bg-transparent
-                    prose-pre:p-0
-                    prose-pre:shadow-none
-                    prose-pre:border-0
-                    space-y-6
-                    sm:space-y-8
-                ">
-                    <ReactMarkdown rehypePlugins={[rehypeRaw]}
-                                   components={{
-                                       code({ node, className, children, ...props }) {
-                                           const match = /language-(\w+)/.exec(className || "");
-                                           if (match && node && !node.properties.inline) {
-                                               return (
-                                                   <SyntaxHighlighter
-                                                       style={vscDarkPlus as any}
-                                                       language={match[1]}
-                                                       PreTag="div"
-                                                   >
-                                                       {String(children).replace(/\n$/, "")}
-                                                   </SyntaxHighlighter>
-                                               );
-                                           }
-                                           return <code className={className} {...props}>{children}</code>;
-                                       },
-                                   }}
+            <div className="w-full max-w-7xl mx-auto mt-12 sm:mt-16 bg-gray-200 dark:bg-neutral-800 px-4 sm:px-6 md:px-12 py-6 sm:py-8 rounded-2xl shadow-lg">
+                <article className="prose dark:prose-invert max-w-none prose-pre:bg-transparent prose-pre:p-0">
+                    <ReactMarkdown
+                        rehypePlugins={[rehypeRaw]}
+                        components={{
+                            code({ className, children, ...props }) {
+                                const match = /language-(\w+)/.exec(className || "");
+                                // Use the 'match' to check for a language, which indicates a code block.
+                                return match ? (
+                                    <SyntaxHighlighter
+                                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                        style={vscDarkPlus as any}
+                                        language={match[1]}
+                                        PreTag="div"
+                                    >
+                                        {String(children).replace(/\n$/, "")}
+                                    </SyntaxHighlighter>
+                                ) : (
+                                    <code className={className} {...props}>
+                                        {children}
+                                    </code>
+                                );
+                            },
+                        }}
                     >
                         {markdownContent}
                     </ReactMarkdown>
