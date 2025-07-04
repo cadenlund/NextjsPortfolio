@@ -8,7 +8,7 @@ const FeaturedProjects: React.FC = () => {
     const featuredProjects = projectsData.filter(project => project.isFeatured);
 
     return (
-        <div className="w-full max-w-[1200px] mx-auto mt-32 px-4 sm:px-0">
+        <div className="w-full max-w-7xl mx-auto mt-32 px-4 sm:px-6 lg:px-8">
             <h2 className="text-4xl font-medium text-gray-800 dark:text-gray-300 mb-8">
                 Featured Projects
             </h2>
