@@ -450,6 +450,160 @@ plt.show()
   <img src="/images/longshortportfolioproject/tsla_price_after_adj.png" alt="Example Image" />
 </p>
 
+Upon visual inspection we can see that the prices are now adjusted for stock splits, and the data looks good. Next, I will download the metadata for each ticker. 
+It contains metrics like ticker, is active, market cap, list date, and sic code. 
+
+ \`\`\`python
+
+# 1) Extract unique tickers from your existing DataFrame
+tickers = data['ticker'].dropna().unique().tolist()
+print("First 20 tickers:", tickers[:20])
+
+# 2) Prepare containers
+meta_list   = []
+bad_tickers = []
+
+# 3) Loop through tickers
+for t in tqdm(tickers, desc="Fetching ticker details"):
+    try:
+        resp = client.get_ticker_details(t)
+    except Exception:
+        # couldn’t fetch details at all
+        bad_tickers.append(t)
+        continue
+
+    # build a simple dict from resp attributes
+    record = {
+        'ticker':                     t,
+        'active':                     resp.active,
+        'market_cap':                 resp.market_cap,
+        'list_date':                  resp.list_date,
+        'sic_code':                   resp.sic_code,
+    }
+
+    # 4) if inactive or any field (besides ticker) is None → mark bad & skip
+    has_missing = any(
+        record[field] is None
+        for field in record
+        if field != 'ticker'
+    )
+    if not record['active'] or has_missing:
+        bad_tickers.append(t)
+        continue
+
+    # 5) otherwise keep it
+    meta_list.append(record)
+
+# 6) Build the clean DataFrame
+meta_df = pd.DataFrame(meta_list)
+
+# 7) Deduplicate bad_tickers
+bad_tickers = sorted(set(bad_tickers))
+
+# 8) Inspect
+print("Clean metadata:")
+print(meta_df.head())
+print(f"\\nTickers skipped (inactive or missing data): {len(bad_tickers)}")
+
+\`\`\`
+
+ \`\`\`text
+First 20 tickers: ['A', 'AA', 'AAA', 'AAAU', 'AAL', 'AAOI', 'AAON', 'AAP', 'AAPL', 'AAT', 'AAXJ', 'AB', 'ABBV', 'ABCB', 'ABCL', 'ABEO', 'ABEQ', 'ABEV', 'ABG', 'ABM']
+Fetching ticker details: 100%|████████████████████████████████████████████████████████████████████| 5540/5540 [04:38<00:00, 19.91it/s]
+Clean metadata:
+  ticker  active    market_cap   list_date sic_code
+0      A    True  2.998995e+10  1999-11-18     3826
+1     AA    True  6.474725e+09  2016-10-18     3334
+2    AAL    True  6.206615e+09  2013-12-10     4512
+3   AAOI    True  5.653103e+08  2013-09-26     3674
+4   AAON    True  6.705448e+09  1990-12-01     3585
+
+Tickers skipped (inactive or missing data): 2970
+\`\`\`
+
+The code above first extracts the unique tickers from the data dataframe and stores them in a list called tickers. Then it initializes two empty lists, 
+one for storing the metadata and one for storing the bad tickers. it then loops through each ticker and tries to get the ticker details using the Polygon.io REST API. If it fails to get the details,
+ it appends the ticker to the bad tickers list and continues to the next ticker. We build a simple dictionary from the response attributes, containing the ticker, active status, market cap, list date, and sic code.
+ If the ticker is inactive or any field (besides ticker) is None, it appends the ticker to the bad tickers list and continues to the next ticker. it then builds a clean DataFrame from the metadata list and deduplicates the bad tickers list.
+  Finally, it prints the first 5 rows of the clean metadata DataFrame and the number of bad tickers skipped. 
+  
+  Unfortunately, polygon has incompelte data for 2970 of the stocks in our dataset so we will have to work with the remaining 2570 stocks. 
+  
+ 
+  \`\`\`python
+# Filter out bad tickers from the data
+new_tickers = [t for t in tickers if t not in bad_tickers]
+filtered_data = data[data['ticker'].isin(new_tickers)].copy()
+
+# Reset the index
+filtered_data.reset_index(drop=True, inplace=True)
+
+#evaluate the new data 
+data_evaluation(filtered_data)
+\`\`\`
+  \`\`\`text
+Amount of null values per column: 
+ ticker          0
+volume          0
+open            0
+close           0
+high            0
+low             0
+transactions    0
+time            0
+dtype: int64 
+
+Number of unique tickers: 2570
+The mode of the amount of tickers is 1078
+The number of incomplete tickers is 0
+The percentage of incomplete tickers relative to the mode is 0.000%
+\`\`\`
+
+## Storing the data in the database
+
+Using SQLAlchemy, we can store the data in the PostgreSQL database that we created earlier. After creating a connection to the database, we can use the pandas to_sql function to store the data in the database.
+
+\`\`\`python
+db_user = os.getenv("POSTGRES_USER")
+db_password = os.getenv("POSTGRES_PASSWORD")
+db_host = os.getenv("POSTGRES_HOST")
+db_port = os.getenv("POSTGRES_PORT")
+db_name = os.getenv("POSTGRES_DB")
+\`\`\`
+\`\`\`python
+from sqlalchemy import create_engine
+
+engine = create_engine(
+    f"postgresql+psycopg2://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}"
+)
+\`\`\`
+
+Engine is our database connection, the to_sql function takes the database connection, 
+the name of the table to store the data in, and the dataframe to store. It allows us to bypass handling the SQL queries ourselves,
+ making it easier to store data in the database.
+ 
+ \`\`\`python
+# append ticker metadata into the existing ticker_metadata table
+meta_df.to_sql(
+    "ticker_metadata",
+    engine,
+    if_exists="append",
+    index=False
+)
+\`\`\`
+ \`\`\`python
+# append OHLCV DataFrame into the existing ohlcv_data table
+filtered_data.to_sql(
+    "ohlcv_data",
+    engine,
+    if_exists="append",
+    index=False
+)
+\`\`\`
+
+Now that we have stored the data in the database, 
+we can query the data with blazing fast speeds, making data analysis and backtesting much easier.
+
 `;
 
 

@@ -9,7 +9,7 @@ export interface Project {
     details: string;
     primaryActionText: string;
     primaryActionLink: string;
-    isFeatured: boolean; // <-- The key to our new system!
+    isFeatured: boolean;
 }
 
 export const projectsData: Project[] = [
@@ -37,19 +37,19 @@ export const projectsData: Project[] = [
         details: "My personal portfolio website built with Next.js and Tailwind CSS, featuring a modern design and responsive layout.",
         primaryActionText: "View Report",
         primaryActionLink: "https://github.com/cadenlund/NextjsPortfolio",
-        isFeatured: false, // <-- Set this to true to feature it
+        isFeatured: false,
     },
     {
         slug: "Capitol-Companies",
         title: "Capitol Companies Website",
         description: "Front end website for Capitol Companies, a concrete and construction company.",
         skills: ["JavaScript", "React", "Next.js", "Tailwind CSS"],
-        image: "/images/capitolcompanies/og-image.jpg",
+        image: "/images/capitolcompanies/og-image.png",
         githubLink: "",
         dateAdded: "2025-07-03",
         details: "Details for another project.",
         primaryActionText: "View Site",
         primaryActionLink: "https://www.capitolcompanies.org",
-        isFeatured: true, // <-- This one will not appear in "Featured"
+        isFeatured: true,
     },
 ];
