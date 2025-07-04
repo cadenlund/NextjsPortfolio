@@ -226,38 +226,48 @@ export default function ProjectsGallery() {
                                     ))}
                                 </div>
 
-                                {/* this container is pushed to bottom */}
+                                {/* This container is pushed to bottom */}
                                 <div className="flex items-center gap-4 mt-auto">
-                                    {project.primaryActionLink ? (
-                                        <a
-                                            href={project.primaryActionLink}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-lg"
-                                        >
-                                            {project.primaryActionText || "View Details"}
-                                        </a>
-                                    ) : (
-                                        <Link
-                                            href={project.primaryActionLink || `/projects/${project.slug}`}
-                                            className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-lg"
-                                        >
-                                            {project.primaryActionText || "View Details"}
-                                        </Link>
-                                    )}
+                                    {(() => {
+                                        // First, check if the link is external or internal
+                                        const isExternal = project.primaryActionLink?.startsWith('http');
 
+                                        if (isExternal) {
+                                            // If it's external, use an <a> tag with target="_blank"
+                                            return (
+                                                <a
+                                                    href={project.primaryActionLink}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-lg"
+                                                >
+                                                    {project.primaryActionText || "View Site"}
+                                                </a>
+                                            );
+                                        } else {
+                                            // If it's internal, use the Next.js <Link> for same-tab navigation
+                                            return (
+                                                <Link
+                                                    href={project.primaryActionLink || `/projects/${project.slug}`}
+                                                    className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-lg"
+                                                >
+                                                    {project.primaryActionText || "View Details"}
+                                                </Link>
+                                            );
+                                        }
+                                    })()}
 
+                                    {/* The GitHub link should always open in a new tab */}
                                     {project.githubLink && (
-                                        <Link
+                                        <a
                                             href={project.githubLink}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="bg-gray-600 text-white hover:bg-gray-700 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                            className="bg-gray-600 text-white hover:bg-gray-700 px-4 py-2 rounded-lg"
                                         >
                                             GitHub
-                                        </Link>
+                                        </a>
                                     )}
-
                                 </div>
                             </div>
                         </div>
