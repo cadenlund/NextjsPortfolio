@@ -1,10 +1,10 @@
 import React from "react";
 import Image from "next/image";
-// Assuming your central data file is set up
+import Link from "next/link"; // <-- 1. Add the import for the Link component
 import { projectsData } from "../../data/projects";
 
 const FeaturedProjects: React.FC = () => {
-    // Filter to get only the featured projects, just like before
+    // Filter to get only the featured projects
     const featuredProjects = projectsData.filter(project => project.isFeatured);
 
     return (
@@ -16,19 +16,16 @@ const FeaturedProjects: React.FC = () => {
                 {featuredProjects.map((project) => (
                     <div key={project.slug}
                          className="overflow-hidden rounded-lg shadow-lg bg-white dark:bg-neutral-800 flex flex-col transition-transform duration-300 ease-in-out hover:scale-105">
-                        {/* --- 1. Consistent Image Container --- */}
-                        {/* This div sets a consistent aspect ratio. The Image inside will fill it without resizing the card. */}
+
                         <div className="relative w-full aspect-video">
                             <Image
                                 src={project.image}
                                 alt={`${project.title} Cover`}
-                                fill // 'fill' makes the image act like a background
-                                className="object-cover transition-transform duration-500" // Subtle zoom on hover
+                                fill
+                                className="object-cover"
                             />
                         </div>
 
-                        {/* --- 2. Always-Visible Content Area --- */}
-                        {/* On mobile, this is just a standard content block. On desktop, it will contain the hover elements. */}
                         <div className="p-6 flex flex-col flex-grow">
                             <h3 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
                                 {project.title}
@@ -37,16 +34,38 @@ const FeaturedProjects: React.FC = () => {
                                 {project.description}
                             </p>
 
-                            {/* --- 3. Buttons are always visible at the bottom --- */}
+                            {/* --- 2. Updated button logic --- */}
                             <div className="flex gap-4 mt-4">
-                                <a
-                                    href={project.primaryActionLink}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                                >
-                                    {project.primaryActionText}
-                                </a>
+                                {(() => {
+                                    // Check if the link is external (starts with http)
+                                    const isExternal = project.primaryActionLink?.startsWith('http');
+
+                                    if (isExternal) {
+                                        // Render a standard <a> tag for external links
+                                        return (
+                                            <a
+                                                href={project.primaryActionLink}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                            >
+                                                {project.primaryActionText || "View Site"}
+                                            </a>
+                                        );
+                                    } else {
+                                        // Render a Next.js <Link> for internal pages
+                                        return (
+                                            <Link
+                                                href={project.primaryActionLink || `/projects/${project.slug}`}
+                                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                            >
+                                                {project.primaryActionText || "View Details"}
+                                            </Link>
+                                        );
+                                    }
+                                })()}
+
+                                {/* GitHub link should always be an external link */}
                                 {project.githubLink && (
                                     <a
                                         href={project.githubLink}
