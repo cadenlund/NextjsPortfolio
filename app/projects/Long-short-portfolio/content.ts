@@ -374,6 +374,82 @@ plt.show()
  <p align="center">
   <img src="/images/longshortportfolioproject/tsla_price_before_adj.png" alt="Example Image" />
 </p>
+
+We can see that the data looks good, but there are some issues with the data. The first issue is that the prices are not adjusted for stock splits or dividends. Polygon.io does not provide adjusted prices so its up to the user to adjust the prices themselves.
+Stock splits heavily affect the price of a stock, but dividends do not affect the price of a stock, they only affect the total return of the stock. I decided to only adjust the prices for stock splits, as dividends are minor in comparison.
+To acquire the stock split data, I used the Polygon.io REST API to download the stock split data for each ticker. The stock split data is much smaller than the price data, so the download is much faster. the following code
+takes each stock split ordered by execution date and appends it to a list called splits. 
+
+ \`\`\`python
+from polygon import RESTClient
+
+# 2) Prepare your Polygon client
+client = RESTClient(POLYGON_KEY)
+
+splits = []
+for s in tqdm(client.list_splits(
+\torder="asc",
+\tlimit="10",
+\tsort="execution_date",
+\t)):
+    splits.append(s) 
+\`\`\`
+
+After obtaining the split information for stocks, I created a function that takes the split data and price dataframe and adjusts all the tickers for stock splits. 
+
+ \`\`\`python
+def adjust_for_splits(data, splits):
+    start_date = pd.to_datetime(data['time'].min())
+    end_date = pd.to_datetime(data['time'].max())
+
+    tickers_in_data = set(data['ticker'].unique())
+
+    # Filter splits
+    filtered = [
+        s for s in splits
+        if start_date <= pd.to_datetime(s.execution_date) <= end_date
+        and s.ticker in tickers_in_data
+    ]
+
+    data = data.copy()
+    splits = sorted(filtered, key=lambda s: s.execution_date)
+
+    for split in tqdm(splits, desc='Adjusting ohlcv data to splits'):
+        exec_date = pd.to_datetime(split.execution_date)
+        ratio = split.split_from / split.split_to
+        ticker = split.ticker
+
+        # Use the 'time' column for the date filter
+        mask = (data['ticker'] == ticker) & (pd.to_datetime(data['time']) < exec_date)
+        data.loc[mask, ['open', 'high', 'low', 'close']] *= ratio
+        data.loc[mask, 'volume'] /= ratio
+
+    return data
+\`\`\`
+
+First, the function takes the start and end dates of the data and filters the splits to only include splits that occurred within that date range.
+Then, a list of valid tickers is created by making a set of all unique tickers in the data. After that, the splits are then filtered to only include ones that are in the data and within the date range. The splits are 
+also sorted by execution date to ensure that the splits are applied in the correct order. The function then iterates through each split, converts the splits execution date to a datetime object, and calculates the split ratio.
+After a stocks split ratio is calculated, a boolean mask is created to select only the date range that is to be adjusted. Using the mask, the ratio is applied to the open, high, low, and close prices of the stock, and the volume is divided by the ratio.
+Lastly, the function returns the adjusted dataframe. We can call the function, store the result in a dataframe called **data**, and plot the adjusted data to see how it looks.
+
+ \`\`\`python
+data = adjust_for_splits(filtered_data, splits)
+\`\`\`
+ \`\`\`text
+Adjusting ohlcv data to splits: 100%|███████████████████████████████████████████████████████████████| 761/761 [06:13<00:00,  2.04it/s]
+\`\`\`
+ \`\`\`python
+data[data['ticker'] == 'TSLA'].plot(x='time', y='close', title='TSLA Close Price')
+plt.xticks(rotation=45)  # Rotate x-axis labels vertically
+plt.tight_layout()       # Optional: prevent clipping
+plt.show()
+\`\`\`
+
+ <p align="center">
+  <img src="/images/longshortportfolioproject/tsla_price_after_adj.png" alt="Example Image" />
+</p>
+
 `;
 
 
