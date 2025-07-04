@@ -34,6 +34,10 @@ const Skills: React.FC = () => {
                             className="bg-red-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Scikit-learn</span>
                         <span
                             className="bg-red-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Scipy</span>
+                        <span
+                            className="bg-red-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Psycopg</span>
+                        <span
+                            className="bg-red-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Boto3</span>
                     </div>
                 </div>
 
@@ -78,9 +82,9 @@ const Skills: React.FC = () => {
                         <FaCog className="mr-3" /> Quantitative Finance
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                        <span className="bg-yellow-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Computer Vision</span>
-                        <span className="bg-yellow-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Feature Engineering</span>
-                        <span className="bg-yellow-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Model Evaluation</span>
+                        <span className="bg-yellow-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Alpha factor Long/Short models</span>
+                        <span className="bg-yellow-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Pairs trading</span>
+                        <span className="bg-yellow-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Momentum based strategies</span>
                     </div>
                 </div>
 
@@ -90,23 +94,36 @@ const Skills: React.FC = () => {
                         <FaCloud className="mr-3" /> Comp Sci Fundamentals
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                        <span className="bg-purple-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Docker</span>
-                        <span className="bg-purple-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Flask</span>
-                        <span className="bg-purple-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Heroku</span>
-                        <span className="bg-purple-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Git</span>
+                        <span
+                            className="bg-purple-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Networking</span>
+                        <span
+                            className="bg-purple-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Linux</span>
+                        <span className="bg-purple-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">CLI experience</span>
+                        <span
+                            className="bg-purple-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Git</span>
+                        <span
+                            className="bg-purple-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Operating Systems</span>
+                        <span
+                            className="bg-purple-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Computer architecture</span>
                     </div>
                 </div>
 
                 {/* Card 6 */}
-                <div className="bg-gray-200 dark:bg-neutral-800 rounded-lg shadow-lg p-6 hover:shadow-xl hover:scale-105 transition-all duration-300 min-h-[150px] md:min-h-[220px]">
+                <div
+                    className="bg-gray-200 dark:bg-neutral-800 rounded-lg shadow-lg p-6 hover:shadow-xl hover:scale-105 transition-all duration-300 min-h-[150px] md:min-h-[220px]">
                     <h3 className="text-xl font-medium text-gray-700 dark:text-gray-400 flex items-center mb-6">
                         <FaPaintBrush className="mr-3" /> Web/Software Dev
                     </h3>
                     <div className="flex flex-wrap gap-2">
-                        <span className="bg-teal-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">React</span>
-                        <span className="bg-teal-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Next.js</span>
+                        <span
+                            className="bg-teal-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">React</span>
+                        <span
+                            className="bg-teal-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Next.js</span>
                         <span className="bg-teal-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Tailwind CSS</span>
-                        <span className="bg-teal-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">Figma</span>
+                        <span
+                            className="bg-teal-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">JavaScript</span>
+                        <span
+                            className="bg-teal-600 text-white text-sm font-medium px-2.5 py-0.5 rounded-full">TypeScript</span>
                     </div>
                 </div>
             </div>

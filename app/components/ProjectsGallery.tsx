@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { projectsData, Project } from "../../data/projects";
 
 // --- Reusable Components ---
 interface InputProps {
@@ -37,57 +38,7 @@ const Badge: React.FC<BadgeProps> = ({ children, className = "", isActive = fals
 );
 
 
-// --- Example Projects Data ---
-interface Project {
-    slug: string;
-    title: string;
-    description: string;
-    skills: string[];
-    image: string;
-    githubLink: string;
-    dateAdded: string; // Or Date
-    details: string;
-    primaryActionText: string;
-    primaryActionLink: string;
-}
-const projectsData = [
-    {
-        slug: "cadenlund-portfolio",
-        title: "Cadenlund.com Website",
-        description: "Personal website showcasing my portfolio, skills, and projects.",
-        skills: ["JavaScript", "TypeScript", "Tailwind CSS", "React", "Next.js", "UI/UX"],
-        image: "/images/cadenlundsite/mySite.png",
-        githubLink: "https://github.com/cadenlund/NextjsPortfolio",
-        dateAdded: "2025-01-15",
-        details: "My personal portfolio website built with Next.js and Tailwind CSS, featuring a modern design and responsive layout.",
-        primaryActionText: "View Report",
-        primaryActionLink: "/projects/mot-real-time",
-    },
-    {
-        slug: "Long-short-portfolio",
-        title: "Alpha Factor Long-short Strategy",
-        description: "Created alpha factors, evaluated them with Alphalens, and created a long short strategy",
-        skills: ["Python", "Pandas", "NumPy", "SQL", "Matplotlib", "Alphalens", "VectorBT", "Quant Finance"],
-        image: "/images/longshortportfolioproject/longshortportfoliocover.png",
-        githubLink: "https://github.com/yourusername/Another-Project",  // no github
-        dateAdded: "2025-05-18",
-        details: "none",
-        primaryActionText: "View Report",
-        primaryActionLink: "/projects/Long-short-portfolio",
-    },
-    {
-        slug: "Capitol-Companies",
-        title: "Capitol Companies Website",
-        description: "Front end website for Capitol Companies, a concrete and construction company.",
-        skills: ["JavaScript", "TypeScript", "React", "Next.js", "Tailwind CSS", "UI/UX"],
-        image: "/images/capitolcompanies/og-image.jpg",
-        githubLink: "",
-        dateAdded: "2025-07-03",
-        details: "Details for another project.",
-        primaryActionText: "View Site",
-        primaryActionLink: "https://www.capitolcompanies.org",
-    },
-];
+
 
 
 // Get unique skills across all projects

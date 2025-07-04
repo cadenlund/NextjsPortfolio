@@ -51,11 +51,11 @@ const Timeline: React.FC = () => {
                     icon={<FaGraduationCap className="h-6 w-6" />}
                     iconBgColor="bg-blue-600"
                     title="Episcopal High School"
-                    date="Baton Rouge, LA | 2020-2023"
+                    date="Baton Rouge, LA | 2020 - 2023"
                     description="Graduated with a focus on computer science and advanced mathematics."
                 >
                     <Badge>Python</Badge>
-                    <Badge>Java</Badge>
+                    <Badge>Statistical Modeling</Badge>
                     <Badge>Calculus</Badge>
                 </TimelineItem>
 
@@ -67,20 +67,24 @@ const Timeline: React.FC = () => {
                     description="Pursuing a Bachelor's in Computer Science with a concentration in Data Analytics & Machine Learning."
                 >
                     <Badge>Data Structures</Badge>
-                    <Badge>Algorithms</Badge>
+                    <Badge>Machine Learning</Badge>
                     <Badge>Linear Algebra</Badge>
+                    <Badge>Algorithms</Badge>
                 </TimelineItem>
 
                 <TimelineItem
                     icon={<FaBriefcase className="h-5 w-5" />}
                     iconBgColor="bg-red-500"
-                    title="SEO & Digital Marketing"
-                    date="Frockcandy Online | 2022"
-                    description="Performed SEO optimization on a Shopify boutique. Managed keyword research, fixed technical errors, and launched optimized Google Ad campaigns."
+                    title="Indepedent Website Developer & Digital Marketer"
+                    date="Baton Rouge, LA | 2022 - Present"
+                    description="Built fast websites for clients and performed digital marketing services including SEO, Google Ads, and data analytics."
                 >
+                    <Badge>React</Badge>
+                    <Badge>TypeScript</Badge>
+                    <Badge>Next.js</Badge>
                     <Badge>SEO</Badge>
                     <Badge>Google Ads</Badge>
-                    <Badge>Shopify</Badge>
+                    <Badge>Data Analytics</Badge>
                 </TimelineItem>
             </div>
         </div>
