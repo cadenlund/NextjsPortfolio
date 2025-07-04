@@ -114,7 +114,7 @@ LIMIT 50;
 
 ---
 
-## 📥 Data Aquisition and Preprocessing
+## 📥 Raw Data Aquisition
 
 I faced many issues initially downloading the data via the REST API. Polygons REST API throttles the rate of requests which can lead to incomplete data downloads. 
 I later resorted to the Amazon S3 method, which allows for bulk downloads of historical data via Amazon cloud storage. The first thing(after constructing a database) is to import
@@ -158,7 +158,7 @@ session = boto3.Session( # Session object used to configure users and environmen
  After creating a session, we must specify the AWS service that we want to use, in this case S3. We must also specify an endpoint to connect to, which is the Polygon.io S3 bucket.
  
 \`\`\`python
-# Create a client with session and speficy the endpoint (where the data is located)
+# Create a client with session and specify the endpoint (where the data is located)
 s3 = session.client(
     's3', # Connecting to the S3 (Simple Storage Service) specifically (can connect to any aws service here)
     endpoint_url='https://files.polygon.io', # Base url for the service you want to access
@@ -210,7 +210,170 @@ this function first creates a list of "folder paths" to search through called pr
 
 Then I used the paginator to recursively get all the month files from S3 and then I further stepped in to each month folder and appended the name of each daily file to a list called object_keys.
 S3 provides the paginator to recursively get all the files from S3, which is useful for navigating nested folder structures like the one used by Polygon.io. The function finally returns a list of all the file names which will be fed
-to a download function. 
+to a download function. The download function loops through each file name and downloads it from the S3 bucket, decompresses it, and saves it to a pandas DataFrame.
+
+\`\`\`python
+def get_daily_data(keys):
+    """
+    grabs all the csv files stored in keys, unzips them, and concatenates them all in a dataframe
+
+
+    Args:
+        keys (String[]): list of csv file paths to download from s3
+
+    Returns:
+        Dataframe: dataframe with stock data appended from all days
+    """
+    dfs = []
+    for key in tqdm(keys, desc="Fetching Stock data"):
+        if key.endswith('csv.gz'):
+            response = s3.get_object(Bucket='flatfiles', Key=key)
+            df = pd.read_csv(BytesIO(response['Body'].read()), compression = 'gzip')
+            dfs.append(df)
+    return pd.concat(dfs, ignore_index=True)  
+\`\`\` 
+
+The download function is relatively simple. We first create an empty list called dfs that will temporarily hold the dataframes for each file. then we iterate through the keys list with a tqdm progress bar. 
+We check if the key ends with 'csv.gz' to ensure we are only downloading the compressed CSV files. We download the object from S3 and put it into a response object.
+We read the raw compressed file as bytes and store them in our computers main memory(RAM) using the BytesIO function. Then we read the bytes into a pandas DataFrame using the read_csv function, specifying that the file is compressed with gzip.
+The result is appended to the dfs list. After looping through all the keys, we concatenate all the dataframes in the dfs list into a single dataframe and return it. We finally call these functions to download the data and store it in a dataframe called data.
+
+\`\`\`python
+data = get_daily_data(get_daily_polygon_files(2021, 5))
+\`\`\`
+\`\`\`text
+Fetching Stock data: 100%|████████████████████████████████████████████████████████████████████████| 1078/1078 [01:41<00:00, 10.66it/s]
+\`\`\` 
+
+---
+
+## Data Preprocessing
+
+After downloading the data there are still many steps in ensuring that our data is clean and ready for analysis. The first of which is pruning tickers that have missing trading days and invalid data. 
+To tackle this I created a function called data_evaluation that inputs a dataframe and prints out information regarding its validity. 
+
+\`\`\`python
+def data_evaluation(data):
+    """
+    evaluates the data and prints null values and missing data
+
+    Args:
+        data: input data frame
+
+    Returns:
+        Void
+    """
+    ticker_counts = data['ticker'].value_counts()
+    most_common_value = ticker_counts.mode().iloc[0]
+    num_incomplete_tickers = int((ticker_counts != most_common_value).sum())
+    incomplete_percentage = (num_incomplete_tickers / ticker_counts.size) * 100
+    
+    print(f"""
+Amount of null values per column: \\n {data.isnull().sum()} \\n
+Number of unique tickers: {data['ticker'].nunique()}
+The mode of the amount of tickers is {most_common_value}
+The number of incomplete tickers is {num_incomplete_tickers}
+The percentage of incomplete tickers relative to the mode is {incomplete_percentage:.3f}%
+    """)
+\`\`\`
+
+This function prints out a few key metrics about the data. It counts the number of null values in each column,
+ counts the number of unique tickers, finds the mode of the number of tickers, and calculates the number and percentage of incomplete tickers relative to the mode.
+ After running this function we can see that most of the data is invalid and only 30% of the original tickers have complete data. 
+ 
+ \`\`\`python
+data_evaluation(data)
+\`\`\`
+\`\`\`text
+Amount of null values per column: 
+ ticker          693
+volume            0
+open              0
+close             0
+high              0
+low               0
+window_start      0
+transactions      0
+dtype: int64 
+
+Number of unique tickers: 18017
+The mode of the amount of tickers is 1078
+The number of incomplete tickers is 12477
+The percentage of incomplete tickers relative to the mode is 69.251%
+\`\`\` 
+
+Next, I create a function that filters out the incomplete tickers and returns a new dataframe with only the complete tickers. It does so in 4 key steps:
+
+1. **Remove null values from ticker list**
+2. **Further filter the ticker list to only include tickers with exactly the mode of the mode amount of days from each stock** (only stocks with exactly 1078 days of data)
+3. **convert nanosecond time to a normalized datetime format** (from nanoseconds to seconds)
+4. **Finally call the evaluation function on the new dataframe to ensure that it is valid**
+
+Once all that is complete, I call the function and store the result in a new dataframe called **filtered_data**.
+
+ \`\`\`python
+def get_clean_tickers(data):
+    
+    #Remove null tickers from ticker list
+    unique_tickers = data['ticker'].dropna().unique()
+    tickers_with_null = data[data.isnull().any(axis=1)]['ticker'].dropna().unique().tolist()
+    valid_tickers = list(set(unique_tickers) - set(tickers_with_null))
+
+    #Create new filtered DataFrame and filter further based on mode amount of samples
+    filtered_null_data = data[data['ticker'].isin(valid_tickers)]
+    ticker_counts = filtered_null_data['ticker'].value_counts()
+    most_common_value = ticker_counts.mode().iloc[0]
+    # Get tickers that don't have the mode number of rows
+    incomplete_tickers = ticker_counts[ticker_counts != most_common_value].index.tolist()
+    filtered_final_data = filtered_null_data[filtered_null_data['ticker'].isin(list(set(valid_tickers) - set(incomplete_tickers)))]
+
+    #Print null tickers, evaulate final data, and return final df
+    print(f"tickers with null: {tickers_with_null}")
+    data_evaluation(filtered_final_data)
+    filtered_final_data = filtered_final_data.copy()
+    filtered_final_data['time'] = pd.to_datetime(filtered_final_data['window_start']).dt.date
+    filtered_final_data.drop(columns=['window_start'])
+    return filtered_final_data
+\`\`\`
+ \`\`\`python
+filtered_data = get_clean_tickers(data)
+\`\`\`
+ \`\`\`text
+tickers with null: []
+
+Amount of null values per column: 
+ ticker          0
+volume          0
+open            0
+close           0
+high            0
+low             0
+window_start    0
+transactions    0
+dtype: int64 
+
+Number of unique tickers: 5540
+The mode of the amount of tickers is 1078
+The number of incomplete tickers is 0
+The percentage of incomplete tickers relative to the mode is 0.000%
+\`\`\`
+
+From the data evaluation we can see that the data is now valid and contains no null values. The final dataframe contains 5540 unique tickers, all of which have exactly 1078 days of data.
+
+### Further processing 
+
+Now after filtering out the incomplete tickers, we can plot a few stocks to see how they look, a visual test is always important especially when dealing with financial data.
+
+ \`\`\`python
+filtered_data[filtered_data['ticker'] == 'TSLA'].plot(x='time', y='close', title='TSLA Close Price')
+plt.xticks(rotation=45)  # Rotate x-axis labels vertically
+plt.tight_layout()       # Optional: prevent clipping
+plt.show()
+\`\`\`
+
+ <p align="center">
+  <img src="/images/longshortportfolioproject/tsla_price_before_adj.png" alt="Example Image" />
+</p>
 `;
 
 
