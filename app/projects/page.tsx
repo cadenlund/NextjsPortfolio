@@ -8,7 +8,7 @@ const Projects: React.FC = () => {
     return (
         <section className=" transition-colors duration-010">
             <Header />
-            <ProjectsGallery/>\
+            <ProjectsGallery/>
             <Footer />
         </section>
     );
