@@ -43,9 +43,7 @@ const Header: React.FC = () => {
     return (
         <header className="sticky top-0 z-50 bg-transparent px-4 py-4 sm:px-6 lg:px-8">
             {/* Outer container: grid with symmetric sides */}
-            <div
-                className="relative grid grid-cols-[1fr_auto_1fr] items-center w-full"
-            >
+            <div className="relative flex justify-between items-center w-full">
                 {/* Left: Logo */}
                 <div
                     className="justify-self-start min-w-[120px] transition-opacity duration-200"
@@ -62,7 +60,8 @@ const Header: React.FC = () => {
                         tabIndex={logoOpacity < 0.1 ? -1 : 0} // Makes it untabbable by keyboard
                     >
                         <div>
-                            <div className="flex flex-col text-xl font-normal tracking-tight leading-tight sm:flex-row sm:gap-1.5">
+                            <div
+                                className="flex flex-col text-xl font-normal tracking-tight leading-tight sm:flex-row sm:gap-1.5">
                                 <span>Caden</span>
                                 <span>Lund</span>
                             </div>
@@ -74,13 +73,13 @@ const Header: React.FC = () => {
                 </div>
 
                 {/* Center: Navigation */}
-                <div className="justify-self-center -translate-x-6">
-                    <Navbar />
+                <div className="absolute left-1/2 -translate-x-1/2">
+                    <Navbar/>
                 </div>
 
                 {/* Right: Dark Mode Toggle */}
                 <div className="justify-self-end min-w-[50px]">
-                    <AnimatedToggle />
+                    <AnimatedToggle/>
                 </div>
             </div>
         </header>
