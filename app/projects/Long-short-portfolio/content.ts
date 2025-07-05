@@ -604,6 +604,217 @@ filtered_data.to_sql(
 Now that we have stored the data in the database, 
 we can query the data with blazing fast speeds, making data analysis and backtesting much easier.
 
+### Creating a database API
+
+To make it easier to query the databse, I created a class on top of psycopg2 that allows us to query the database using python functions. The class has methods
+for getting data for a single ticker, getting data for multiple tickers, and getting data for all tickers.
+ It also has methods for getting the metadata for a single ticker and getting the metadata for all tickers. It takes a few inputs like tickers, date, lookback period,freq, and columns. 
+
+  \`\`\`python
+import pandas as pd
+import psycopg2
+from psycopg2.extras import RealDictCursor
+from datetime import timedelta
+
+class PostgresDataHandler:
+    def __init__(self, db_uri):
+        self.conn = psycopg2.connect(db_uri, cursor_factory=RealDictCursor)  # Connect to DB
+
+    def get_data(self, tickers=None, date=None, lookback=30, freq="daily", columns=['close']):
+        """
+        Query daily OHLCV data for one or more tickers over a lookback period ending on a specific date.
+    
+        Args:
+            tickers (list or None): List of tickers, or None to fetch all.
+            date (str): Last date of the lookback period (YYYY-MM-DD). Required.
+            lookback (int): Number of days before \`date\` to fetch.
+            freq (str): Only 'daily' is supported for now.
+            columns (list): List of columns to retrieve.
+    
+        Returns:
+            pd.DataFrame: Pivoted DataFrame (if one column) or tidy format (if multiple).
+        """
+        if date is None:
+            raise ValueError("You must supply a \`date\` for get_data().")
+    
+        if freq != "daily":
+            raise ValueError("Only daily frequency is supported.")
+    
+        end_date = pd.to_datetime(date)
+        start_date = end_date - timedelta(days=lookback)
+    
+        selected_cols = ', '.join(['time', 'ticker'] + columns)
+    
+        if tickers is None:
+            sql = f"""
+            SELECT {selected_cols}
+            FROM ohlcv_data
+            WHERE time BETWEEN %s AND %s
+            ORDER BY time
+            """
+            params = (start_date, end_date)
+        else:
+            sql = f"""
+            SELECT {selected_cols}
+            FROM ohlcv_data
+            WHERE ticker = ANY(%s)
+              AND time BETWEEN %s AND %s
+            ORDER BY time
+            """
+            params = (tickers, start_date, end_date)
+    
+        with self.conn.cursor() as cur:
+            cur.execute(sql, params)
+            rows = cur.fetchall()
+    
+        df = pd.DataFrame(rows)
+    
+        if df.empty:
+            return df
+    
+        df['date'] = pd.to_datetime(df['time'], utc=True)
+    
+        if len(columns) == 1:
+            return df.pivot(index='date', columns='ticker', values=columns[0])
+        else:
+            return df
+
+    def get_sic_codes(self):
+        """
+        Retrieve a dictionary mapping each ticker to its SIC code.
+
+        Returns:
+            dict: { ticker: sic_code }
+        """
+        sql = "SELECT ticker, sic_code FROM ticker_metadata"
+        with self.conn.cursor() as cur:
+            cur.execute(sql)
+            rows = cur.fetchall()
+        # rows are dicts thanks to RealDictCursor
+        return {row['ticker']: row['sic_code'] for row in rows}
+
+    def close(self):
+        self.conn.close()
+
+
+)
+\`\`\`
+
+For time's sake, I will not go into detail about the methods, but they allow us to query the database using python functions instead of writing raw SQL queries which can be 
+cumbersome and error-prone when done outside the PSQL shell. The idea is that now we can just import the api into our code, passing the database URI,
+ and use the methods to query the database in just a few lines code.
+
+---
+
+## Using the Database API
+
+ Before we can create alpha factors, we need to import the data from the database using our newly created PostgresDataHandler API.
+ 
+ \`\`\`python
+import matplotlib.pyplot as plt
+from AlphactoryDB.dbapi import PostgresDataHandler
+from dotenv import load_dotenv
+import os
+import pandas as pd
+\`\`\`
+
+When we inserted the data into the database, we used a database URI that contains the database credentials. We need to redefine the database URI to connect to the database
+and call the handler class with the URI. 
+
+ \`\`\`python
+# Load the .env file
+load_dotenv()
+
+# Read environment variables
+user = os.getenv("POSTGRES_USER")
+password = os.getenv("POSTGRES_PASSWORD")
+host = os.getenv("POSTGRES_HOST")
+port = os.getenv("POSTGRES_PORT")
+db_name = os.getenv("POSTGRES_DB")
+
+# Construct the DB URI
+db_uri = f"postgresql://{user}:{password}@{host}:{port}/{db_name}"
+
+# Create the PostgresDataHandler instance
+handler = PostgresDataHandler(db_uri)
+\`\`\`
+
+Now that we have our handler, we can simply call the methods to obtain the data. This approach is much more efficient than downloading the data from polygon.io every time
+ we want to create a new alpha factor. Now we obtain the prices for a specific date and lookback period, and store it in a dataframe called prices.
+ 
+  \`\`\`python
+prices = handler.get_data(date="2025-04-15", lookback=2000, columns = ['close'])
+\`\`\`
+
+Before moving on to creating alpha factors, there is an important step that needs to be done to ensure the data is ready for analysis. 
+
+- Ensure price index is datetime, timezone-naive, and normalized. 
+
+
+\`\`\`python
+import pandas as pd
+
+# Ensure prices.index is datetime, timezone-naive, and normalized
+prices.index = pd.to_datetime(prices.index).tz_localize(None).normalize()
+\`\`\`
+
+## Creating Alpha Factors
+
+Alpha factors are signals that can be used to predict the future price movement of a stock. They can be based on various metrics, such as price, volume
+and other financial indicators. We use alpha factors to rank stocks on a daily basis, and then use the rankings to create a long-short portfolio.
+An alpha factor is similar in dimensions to the prices dataframe, but instead of prices, it contains the alpha factor values for each ticker:
+a prediction of the future price movement of the stock. The alpha factor I use for the strategy is one I created called **Price Compression**. The calculation is very simple 
+and involves 3 steps:
+
+1. Computing the daily price change and taking the absolute value of the changes. 
+
+2. Take a rolling standard deviation with a window length of 14 with a minimum window length period of 3 to create the compression score. 
+
+3. Invert the compression score.
+
+Lastly, we create a dataframe with multi-indexing, where the first index is the date and the second index is the ticker, the required input for Alphalens. 
+
+\`\`\`python
+window = 14  # How many days to look back
+
+# 1. Compute daily price change (absolute not percent)
+daily_change = prices.diff().abs()
+
+# 2. Rolling std of price change → how “compressed” is the price movement
+compression = daily_change.rolling(window=window, min_periods=3).std()
+
+# 3. Invert to score tight price action as higher signal
+compression_factor = 1 / (compression)
+
+# 4. Stack for Alphalens
+factor = compression_factor.stack(dropna=True)
+factor.name = "factor_price_compression"
+\`\`\`
+
+Due to the rolling window calculation used, the first 3 days of data will be NaN for the alpha factor, but alphalens will handle this automatically.
+To get a better visual understanding, I plotted the factor for Apple and the price for Apple side by side. Each stock has an alpha factor value for that day just like 
+each stock has a close price. 
+
+\`\`\`python
+aapl_values = factor.loc[(slice(None), 'AAPL')].sort_index()
+aapl_values.plot(title="AAPL Factor Values", figsize=(10, 5))
+plt.grid(True)
+plt.show()
+\`\`\`
+
+<p align="center">
+  <img src="/images/longshortportfolioproject/aapl_price.png" alt="Image 1">
+</p>
+
+\`\`\`python
+prices['AAPL'].plot(title="AAPL Prices", ylabel="Price", figsize=(10, 5))
+plt.grid(True)
+plt.show()
+\`\`\`
+
+<p align="center">
+<img src="/images/longshortportfolioproject/aapl_factor.png" alt="Image 2">
+</p>
 `;
 
 
