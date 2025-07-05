@@ -815,9 +815,50 @@ plt.show()
 <p align="center">
 <img src="/images/longshortportfolioproject/aapl_factor.png" alt="Image 2">
 </p>
+
+## Evaluating Alpha Factors
+
+To evaluate the alpha factor, we can use the Alphalens library, which provides tools for analyzing and visualizing alpha factors.
+Alphalens also creates a long-short portfolio based on the alpha factor, which can be used to evaluate the performance of the alpha factor. 
+
+To evaluate the alpha factor, we first need to import the Alphalens library and get clean factor and forward returns data. We also import the sic codes from our
+postgresdatahandler to do a sector analysis of the alpha factor.
+
+\`\`\`python
+import alphalens as al
+
+groups = handler.get_sic_codes()
+
+factor_data = al.utils.get_clean_factor_and_forward_returns(
+    factor=factor,
+    prices=prices,
+    groupby = groups,
+    quantiles=9,
+    periods=(1, 2, 3,)
+)
+
+\`\`\`
+
+After running this code, Alphalens groups each stock every day into 9 quantiles based on the alpha factor value. The lowest quantile contains stocks with low factor values.
+We want these stocks to have negative future returns. The highest quantile contains stocks with high factor values, which we want to have positive future returns. 
+Alphalens then computes forward returns for each quantile,which is the return of the stock in the next 1, 2, and 3 days.
+
+<p align="center">
+<img src="/images/longshortportfolioproject/quantile1.png" alt="Image 2">
+</p>
+
+ It is this data that is used to create the full-tear sheet,
+ which contains various metrics and visualizations to evaluate the alpha factor. We also passes the sic codes to the tear sheet to do a sector analysis of the alpha factor 
+ which allows us to see how the alpha factor performs across different sectors.
+ 
+ \`\`\`python
+al.tears.create_full_tear_sheet(factor_data, by_group=True)
+\`\`\`
+
+<p align="center">
+<img src="/images/longshortportfolioproject/alphalens1.png" alt="Image 2">
+</p>
 `;
-
-
 
 
 export default markdown;
