@@ -10,9 +10,12 @@ Creating a Factor-Based market-neutral trading strategy
   <img src="/images/longshortportfolioproject/longshortportfoliocover.png" alt="Example Image" />
 </p>
 
+
 ---
 
 ## Overview
+
+The GitHub repository for this project can be located <a href="https://github.com/cadenlund/market-neutral-price-compression-portfolio" style="color: #89b5e7;">here</a>.
 
 Systematic investing using **data-driven signals** is a cornerstone of modern quantitative finance.  This project demonstrates how to build a **long-short signal-based strategy** using open-source Python libraries and structured data pipelines.  
 
