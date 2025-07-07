@@ -137,6 +137,20 @@ import matplotlib.pyplot as plt # For plotting data
  a secret key, each of which can be found in your Polygon.io dashboard. It is recommended to store these keys in a **.env** file, which can be loaded using the **dotenv** library. This decouples your api keys
  from your code, allowing you to keep them private. This file also should be **git-ignored** to prevent it from being uploaded to a public repository.
 
+Your env file should be named .env and should contain the following: 
+
+
+\`\`\` text
+AWS_ACCESS_KEY_ID=your_aws_key
+AWS_SECRET_ACCESS_KEY=your_aws_secret
+POLYGON_API_KEY=your_polygon_api_key
+POSTGRES_USER=your_db_user
+POSTGRES_PASSWORD=your_db_password
+POSTGRES_HOST=your_db_host
+POSTGRES_PORT=your_db_port
+POSTGRES_DB=your_db_name
+ \`\`\` 
+
 \`\`\`python
 # Make the environment variables available to python from the .env file
 load_dotenv()
@@ -281,7 +295,7 @@ The percentage of incomplete tickers relative to the mode is {incomplete_percent
 \`\`\`
 
 This function prints out a few key metrics about the data. It counts the number of **null values** in each column,
- counts the number of **unique tickers**, finds the **mode** of the number of tickers, and calculates the number and percentage**** of **incomplete tickers relative to the mode**.
+ counts the number of **unique tickers**, finds the **mode** of the number of tickers, and calculates the number and percentage of **incomplete tickers relative to the mode**.
  After running this function we can see that most of the data is invalid and only **30%** of the original tickers have complete data. 
  
  \`\`\`python
@@ -785,8 +799,6 @@ Before moving on to creating alpha factors, there is one important step that nee
 
 
 \`\`\`python
-import pandas as pd
-
 # Ensure prices.index is datetime, timezone-naive, and normalized
 prices.index = pd.to_datetime(prices.index).tz_localize(None).normalize()
 \`\`\`
@@ -807,7 +819,7 @@ and involves 3 steps:
 
 3. **Invert** the compression score.
 
-Lastly, we create a dataframe with **multi-indexing**, where the first index is the ******date****** and the second index is the ******ticker******, the required input for ******Alphalens******. 
+Lastly, we create a dataframe for the factor with **multi-indexing**, where the first index is the **date** and the second index is the **ticker**, the required input for **Alphalens***. 
 
 \`\`\`python
 window = 14  # How many days to look back
@@ -851,6 +863,18 @@ plt.show()
 <img src="/images/longshortportfolioproject/aapl_factor.png" alt="Image 2">
 </p>
 
+Since we lost 3 days in the rolling window calculation, we must remove the first 3 days of prices to ensure that the dates match. We must also maket the dataframe a 
+multi-indexed dataframe with the first index being the date and the second index being the ticker. We also need to ensure that the index is timezone-naive.
+
+\`\`\`python
+# Clean factor index (ensure tz-naive)
+factor.index = pd.MultiIndex.from_tuples(
+    [(pd.to_datetime(d).tz_localize(None), t) for d, t in factor.index],
+    names=["date", "ticker"]
+)
+
+prices = prices.iloc[3:] # Drop the first 3 days of prices to match the factor index
+\`\`\`
 ---
 
 ## Evaluating Alpha Factors
