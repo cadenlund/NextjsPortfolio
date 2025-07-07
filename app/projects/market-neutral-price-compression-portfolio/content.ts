@@ -1,7 +1,7 @@
 // content.ts
 const markdown = `
 <h1 align="center">
-Creating a Factor-Based Long-Short stock Strategy
+Creating a Factor-Based market-neutral trading strategy
 </h1>
 
 ---

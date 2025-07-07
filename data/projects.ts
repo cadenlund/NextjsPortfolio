@@ -14,16 +14,16 @@ export interface Project {
 
 export const projectsData: Project[] = [
     {
-        slug: "Long-short-portfolio",
-        title: "Alpha Factor Long-short Strategy",
+        slug: "market-neutral-price-compression-portfolio",
+        title: "Market Neutral Price Compression Portfolio",
         description: "Created alpha factors, evaluated them with Alphalens, and created a long short strategy.",
         skills: ["Python", "Pandas", "Alphalens", "VectorBT", "Quant Finance"],
         image: "/images/longshortportfolioproject/longshortportfoliocover.png",
-        githubLink: "#",
+        githubLink: "https://github.com/cadenlund/market-neutral-price-compression-portfolio",
         dateAdded: "2025-05-18",
         details: "A deep dive into creating and backtesting alpha factors for a long-short equity strategy.",
         primaryActionText: "View Report",
-        primaryActionLink: "/projects/Long-short-portfolio",
+        primaryActionLink: "/projects/market-neutral-price-compression-portfolio",
         isFeatured: true,
     },
     {
